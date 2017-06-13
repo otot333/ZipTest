@@ -81,5 +81,18 @@ namespace ZipTest.MsgPack
             //Console.WriteLine();
             
         }
+
+        public void MsgSerializeWithLZ4WithRedis(Package pkg)
+        {
+            var bytes = LZ4MessagePackSerializer.Serialize(pkg);         
+            MsgDeserializeWithLZ4(bytes);
+        }
+
+        public void MsgDeserializeWithLZ4WithRedis(byte[] bytes)
+        {
+            var pkg = LZ4MessagePackSerializer.Deserialize<Package>(bytes);
+        
+
+        }
     }
 }
