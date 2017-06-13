@@ -21,8 +21,7 @@ namespace ZipTest
             
             jsonpack.JsonSerializeWithGzip(pkg211);
             msgpack.MsgSerializeWithLZ4(pkg211);
-            Console.WriteLine("===========SBC 211 For loop 1500====================");
-                   
+            Console.WriteLine("===========SBC 211 For loop 1500====================");                   
 
             Console.WriteLine("--------LZ4 + Msg --------");
             sw.Start();
@@ -45,17 +44,8 @@ namespace ZipTest
             Console.WriteLine($"Time : {sw.Elapsed}");
             sw.Reset();
 
-            //jsonpack.JsonSerializeAndDeserialize(pkg211);
-            //msgpack.MsgSerializeWithLZ4(pkg211);
-            //msgpack.MsgSerializeWithLZ4(pkg301);
-            //Console.WriteLine();
-            //jsonpack.JsonSerializeWithGzip(pkg211);
-
-            //Console.WriteLine("======SBC 301====================");
-            //var msgpack2 = new MsgPack.MsgPack();
-            //msgpack2.MsgSerializeAndDeserialize(pkg301);
-            //jsonpack.JsonSerializeAndDeserialize(pkg301);
             Console.WriteLine();
+
             Console.WriteLine("===========SBC 301 For loop 1500====================");
             Console.WriteLine("--------LZ4 + Msg --------");
             sw.Start();
@@ -66,6 +56,7 @@ namespace ZipTest
             sw.Stop();
             Console.WriteLine($"Time : {sw.Elapsed}");
             sw.Reset();
+
             Console.WriteLine();
             Console.WriteLine("--------GZip + Json --------");
             sw.Start();
