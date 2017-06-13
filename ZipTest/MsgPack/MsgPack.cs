@@ -6,6 +6,8 @@ using System.Text;
 using MessagePack;
 using ZipTest.Model;
 using System.Diagnostics;
+using System.Threading;
+using ZipTest.Redis;
 
 namespace ZipTest.MsgPack
 {
@@ -82,17 +84,19 @@ namespace ZipTest.MsgPack
             
         }
 
-        public void MsgSerializeWithLZ4WithRedis(Package pkg)
+        private ManualResetEvent _manual = new ManualResetEvent(false);
+        public async void MsgSerializeWithLZ4WithRedis(Package pkg)
         {
-            var bytes = LZ4MessagePackSerializer.Serialize(pkg);         
-            MsgDeserializeWithLZ4(bytes);
+            var bytes = LZ4MessagePackSerializer.Serialize(pkg);
+            var task = await RedisService.LPush(bytes);
+            MsgDeserializeWithLZ4WithRedis();
+
         }
 
-        public void MsgDeserializeWithLZ4WithRedis(byte[] bytes)
+        public async void MsgDeserializeWithLZ4WithRedis()
         {
-            var pkg = LZ4MessagePackSerializer.Deserialize<Package>(bytes);
-        
-
+            var task = await RedisService.RPop();
+            var pkg = LZ4MessagePackSerializer.Deserialize<Package>(task);
         }
     }
 }

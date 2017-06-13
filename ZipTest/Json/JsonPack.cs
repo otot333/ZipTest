@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ZipTest.Model;
+using ZipTest.Redis;
 
 namespace ZipTest.Json
 {
@@ -127,6 +128,44 @@ namespace ZipTest.Json
             //Console.WriteLine($"Deserialize Time:{sw.Elapsed}");
 
 
+
+        }
+
+        public async void JsonSerializeWithGzipWithRedis(Package pkg)
+        {
+            var str = JsonConvert.SerializeObject(pkg);
+            var bytes = Encoding.UTF8.GetBytes(str);
+            byte[] Debytes;
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                {
+                    msi.CopyTo(gs);
+                }
+                Debytes = mso.ToArray();
+            }
+            var task = await RedisService.LPush(Debytes);
+
+            JsonDeserializeWithGzipWithRedis();
+
+        }
+
+        public async void JsonDeserializeWithGzipWithRedis()
+        {
+            var task = await RedisService.RPop();
+            Package pkg;
+            var str = "";
+            using (var msi = new MemoryStream(task))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    gs.CopyTo(mso);
+                }
+                str = Encoding.UTF8.GetString(mso.ToArray());
+            }
+            pkg = JsonConvert.DeserializeObject<Package>(str);
 
         }
     }
